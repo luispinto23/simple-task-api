@@ -21,4 +21,32 @@ router.get('/:id', (req, res, next) => {
   res.json(task);
 });
 
+router.post('/', (req, res, next) => {
+  const taskDTO = req.body;
+
+  if (!taskDTO) return next(httpError[500]);
+  // TODO: refactor when using DB
+  const newTask = { id: tasks.length + 1, ...taskDTO };
+
+  tasks.push(newTask);
+
+  res.status(201).json(newTask);
+});
+
+router.put('/:id', (req, res, next) => {
+  const { id } = req.params;
+
+  const task = tasks.find(task => task.id === Number(id));
+
+  if (!task) return next(httpError(404, 'Not found'));
+
+  const updatedTask = { ...task, ...req.body };
+
+  const taskIndex = tasks.findIndex(task => task.id === Number(id));
+
+  tasks[taskIndex] = updatedTask;
+
+  res.json(updatedTask);
+});
+
 module.exports = router;

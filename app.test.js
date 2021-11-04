@@ -33,7 +33,40 @@ describe('Sword task api', () => {
     );
   });
 
-  it.todo('POST /tasks => Create a new task');
-  it.todo('PUT /tasks/:id => Update a specific task');
+  it('POST /tasks => Create a new task', async () => {
+    const taskDate = new Date().getTime();
+    const response = await request(app)
+      .post('/tasks')
+      .send({ description: 'another task', date: taskDate, userId: 0 })
+      .expect(201);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        description: 'another task',
+        date: taskDate,
+        userId: 0,
+      })
+    );
+  });
+
+  it('PUT /tasks/:id => Update a specific task', async () => {
+    const newDescription = 'new description';
+
+    const response = await request(app)
+      .put('/tasks/1')
+      .send({ description: newDescription })
+      .expect(200);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        description: newDescription,
+        date: expect.any(Number),
+        userId: expect.any(Number),
+      })
+    );
+  });
+
   it.todo('DELETE /tasks/:id => Delete a specific task');
 });
