@@ -6,13 +6,13 @@ describe('Sword task api', () => {
     const response = await request(app).get('/tasks').expect(200);
 
     if (response.body.length) {
-      expect(response.boby).toEqual(
+      expect(response.body).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             id: expect.any(Number),
             description: expect.any(String),
             date: expect.any(Number),
-            userId: expect.any(String),
+            userId: expect.any(Number),
           }),
         ])
       );
@@ -20,8 +20,20 @@ describe('Sword task api', () => {
       expect(response.body).toEqual([]);
     }
   });
-  it.todo('GET /tasks/:id => Return a specific task');
-  it.todo('PUT /tasks/:id => Update a specific task');
+  it('GET /tasks/:id => Return a specific task', async () => {
+    const response = await request(app).get('/tasks/1').expect(200);
+
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(Number),
+        description: expect.any(String),
+        date: expect.any(Number),
+        userId: expect.any(Number),
+      })
+    );
+  });
+
   it.todo('POST /tasks => Create a new task');
+  it.todo('PUT /tasks/:id => Update a specific task');
   it.todo('DELETE /tasks/:id => Delete a specific task');
 });
