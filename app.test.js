@@ -68,5 +68,7 @@ describe('Sword task api', () => {
     );
   });
 
-  it.todo('DELETE /tasks/:id => Delete a specific task');
+  it('DELETE /tasks/:id => Delete a specific task', async () => {
+    await request(app).delete('/tasks/1').expect(200);
+  });
 });

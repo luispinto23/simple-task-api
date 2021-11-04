@@ -49,4 +49,17 @@ router.put('/:id', (req, res, next) => {
   res.json(updatedTask);
 });
 
+router.delete('/:id', (req, res, next) => {
+  const { id } = req.params;
+
+  const taskIndex = tasks.findIndex(task => task.id === Number(id));
+
+  if (taskIndex < 0) return next(httpError(404, 'Not found'));
+
+  // TODO: some DB logic goes here
+  tasks.splice(taskIndex);
+
+  res.status(200).json();
+});
+
 module.exports = router;
