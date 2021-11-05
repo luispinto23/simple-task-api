@@ -1,9 +1,8 @@
 var express = require('express');
 var httpError = require('http-errors');
 var router = express.Router();
-const { PrismaClient } = require('@prisma/client');
 
-const prisma = new PrismaClient();
+var prisma = require('../db-client');
 
 const tasks = [
   { id: 1, description: 'sample task', date: new Date().getTime(), userId: 0 },
@@ -27,14 +26,14 @@ router.get('/:id', async (req, res, next) => {
   res.json(task);
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
   const taskDTO = req.body;
 
   if (!taskDTO) return next(httpError[500]);
-  // TODO: refactor when using DB
-  const newTask = { id: tasks.length + 1, ...taskDTO };
 
-  tasks.push(newTask);
+  const newTask = await prisma.task.create({
+    data: { ...taskDTO },
+  });
 
   res.status(201).json(newTask);
 });

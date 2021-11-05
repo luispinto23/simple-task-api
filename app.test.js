@@ -39,15 +39,16 @@ describe('Sword task api', () => {
     const taskDate = new Date().getTime();
     const response = await request(app)
       .post('/tasks')
-      .send({ description: 'another task', date: taskDate, userId: 0 })
+      .send({ description: 'another task', authorId: 1 })
       .expect(201);
 
     expect(response.body).toEqual(
       expect.objectContaining({
         id: expect.any(Number),
         description: 'another task',
-        date: taskDate,
-        userId: 0,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+        authorId: 1,
       })
     );
   });
