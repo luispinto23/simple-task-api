@@ -15,10 +15,12 @@ router.get('/', async (req, res) => {
   res.json(allTasks);
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
 
-  const task = tasks.find(task => task.id === Number(id));
+  const task = await prisma.task.findUnique({
+    where: { id: Number(id) },
+  });
 
   if (!task) return next(httpError(404, 'Not found'));
 
