@@ -2,7 +2,7 @@ var express = require('express');
 var httpError = require('http-errors');
 var router = express.Router();
 
-var prisma = require('../db-client');
+const prisma = require('../db-client');
 
 const tasks = [
   { id: 1, description: 'sample task', date: new Date().getTime(), userId: 0 },
