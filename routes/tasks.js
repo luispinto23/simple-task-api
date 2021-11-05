@@ -1,14 +1,18 @@
 var express = require('express');
 var httpError = require('http-errors');
 var router = express.Router();
+const { PrismaClient } = require('@prisma/client');
 
-//TODO: Change to persisted data
+const prisma = new PrismaClient();
+
 const tasks = [
   { id: 1, description: 'sample task', date: new Date().getTime(), userId: 0 },
 ];
 
-router.get('/', (req, res, next) => {
-  res.json(tasks);
+router.get('/', async (req, res) => {
+  const allTasks = await prisma.task.findMany();
+
+  res.json(allTasks);
 });
 
 router.get('/:id', (req, res, next) => {

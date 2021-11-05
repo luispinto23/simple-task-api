@@ -11,8 +11,9 @@ describe('Sword task api', () => {
           expect.objectContaining({
             id: expect.any(Number),
             description: expect.any(String),
-            date: expect.any(Number),
-            userId: expect.any(Number),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+            authorId: expect.any(Number),
           }),
         ])
       );
