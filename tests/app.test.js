@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('./app');
+const app = require('../app');
 
 describe('Sword task api', () => {
   it('GET /tasks => Return a list of tasks', async () => {
