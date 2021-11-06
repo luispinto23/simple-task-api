@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { validateManager } = require('../middleware/validateAuth');
+const {
+  validateManager,
+  validateAuthor,
+} = require('../middleware/validateAuth');
 
 const prisma = require('../db-client');
 
@@ -9,21 +12,17 @@ const tasks = [
 ];
 
 router.get('/', validateManager, async (req, res) => {
+  if (!res.locals.isManager) return res.status(401).send();
+
   const allTasks = await prisma.task.findMany();
 
   res.json(allTasks);
 });
 
-router.get('/:id', async (req, res, next) => {
-  const { id } = req.params;
+router.get('/:id', validateManager, validateAuthor, async (req, res, next) => {
+  if (!res.locals.task) return res.status(401).send();
 
-  const task = await prisma.task.findUnique({
-    where: { id: Number(id) },
-  });
-
-  if (!task) return res.status(404).send();
-
-  res.json(task);
+  res.json(res.locals.task);
 });
 
 router.post('/', async (req, res, next) => {
