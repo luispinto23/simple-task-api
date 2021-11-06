@@ -18,14 +18,7 @@ const extractEmailFromToken = async req => {
 };
 
 const validateManager = async (req, res, next) => {
-  const email = await extractEmailFromToken(req);
-  if (!email) return res.status(401).send();
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (!user) return res.status(401).send();
+  const { user } = res.locals;
 
   const managerRole = await prisma.role.findFirst({
     where: { description: 'manager' },
@@ -33,25 +26,15 @@ const validateManager = async (req, res, next) => {
 
   if (!managerRole) return res.status(500).send();
 
-  if (user.roleId !== managerRole.id) {
-    res.locals.isManager = false;
-  } else {
-    res.locals.isManager = true;
-  }
+  user.roleId === managerRole.id
+    ? (res.locals.isManager = true)
+    : (res.locals.isManager = false);
+
   next();
 };
 
 const validateAuthor = async (req, res, next) => {
-  // TODO: DRY
-  const email = await extractEmailFromToken(req);
-  if (!email) return res.status(401).send();
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (!user) return res.status(401).send();
-
+  const { user } = res.locals;
   const { id } = req.params;
 
   const task = await prisma.task.findUnique({
@@ -62,11 +45,29 @@ const validateAuthor = async (req, res, next) => {
 
   if (res.locals.isManager || task.authorId === user.id) {
     res.locals.task = task;
+  } else {
+    return res.status(401).send();
   }
+  next();
+};
+
+const validateUser = async (req, res, next) => {
+  const email = await extractEmailFromToken(req);
+  if (!email) return res.status(401).send();
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) return res.status(401).send();
+
+  res.locals.user = user;
+
   next();
 };
 
 module.exports = {
   validateManager,
   validateAuthor,
+  validateUser,
 };

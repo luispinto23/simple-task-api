@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   validateManager,
+  validateUser,
   validateAuthor,
 } = require('../middleware/validateAuth');
 
@@ -11,7 +12,7 @@ const tasks = [
   { id: 1, description: 'sample task', date: new Date().getTime(), userId: 0 },
 ];
 
-router.get('/', validateManager, async (req, res) => {
+router.get('/', validateUser, validateManager, async (req, res) => {
   if (!res.locals.isManager) return res.status(401).send();
 
   const allTasks = await prisma.task.findMany();
@@ -19,49 +20,70 @@ router.get('/', validateManager, async (req, res) => {
   res.json(allTasks);
 });
 
-router.get('/:id', validateManager, validateAuthor, async (req, res, next) => {
-  if (!res.locals.task) return res.status(401).send();
+router.get(
+  '/:id',
+  validateUser,
+  validateManager,
+  validateAuthor,
+  async (req, res, next) => {
+    if (!res.locals.task) return res.status(401).send();
 
-  res.json(res.locals.task);
-});
+    res.json(res.locals.task);
+  }
+);
 
-router.post('/', async (req, res, next) => {
+// I'll assume that even the manager can create tasks, despite that not being mentioned in the challenge description
+router.post('/', validateUser, async (req, res, next) => {
   const taskDTO = req.body;
 
   if (!taskDTO) return res.status(500).send();
 
-  const newTask = await prisma.task.create({
-    data: { ...taskDTO },
-  });
+  const { user } = res.locals;
 
+  try {
+    const newTask = await prisma.task.create({
+      data: { ...taskDTO, authorId: Number(user.id) },
+    });
+  } catch (err) {
+    console.error(error);
+    res.status(500).json();
+  }
   res.status(201).json(newTask);
 });
 
-router.put('/:id', (req, res, next) => {
-  const { id } = req.params;
+router.put('/:id', validateUser, validateAuthor, async (req, res, next) => {
+  const { task } = res.locals;
 
-  const task = tasks.find(task => task.id === Number(id));
+  delete task.updatedAt;
+  const updatedTaskObj = { ...task, ...req.body };
 
-  if (!task) return res.status(404).send();
-
-  const updatedTask = { ...task, ...req.body };
-
-  const taskIndex = tasks.findIndex(task => task.id === Number(id));
-
-  tasks[taskIndex] = updatedTask;
-
+  try {
+    const updatedTask = await prisma.task.update({
+      where: { id: task.id },
+      data: updatedTaskObj,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json();
+  }
   res.json(updatedTask);
 });
 
-router.delete('/:id', (req, res, next) => {
+router.delete('/:id', validateUser, validateManager, async (req, res, next) => {
+  if (!res.locals.isManager) res.status(401).send();
+
   const { id } = req.params;
 
-  const taskIndex = tasks.findIndex(task => task.id === Number(id));
-
-  if (taskIndex < 0) return res.status(404).send();
-
-  // TODO: some DB logic goes here
-  tasks.splice(taskIndex);
+  try {
+    await prisma.task.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json();
+  }
 
   res.status(200).json();
 });
