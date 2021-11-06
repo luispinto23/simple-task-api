@@ -7,7 +7,7 @@ const {
 } = require('../middleware/validateAuth');
 
 const prisma = require('../db-client');
-
+const emitter = require('../events/emitter');
 const SUMMARY_CHAR_LIMIT = 2500;
 
 router.get('/', validateUser, validateManager, async (req, res) => {
@@ -44,6 +44,7 @@ router.post('/', validateUser, async (req, res, next) => {
       data: { ...taskDTO, authorId: Number(user.id) },
     });
 
+    emitter.emit('taskCreated', newTask.id, user.name, newTask.createdAt);
     return res.status(201).json(newTask);
   } catch (err) {
     console.error(error);
@@ -53,6 +54,7 @@ router.post('/', validateUser, async (req, res, next) => {
 
 router.put('/:id', validateUser, validateAuthor, async (req, res, next) => {
   const taskDTO = req.body;
+  const { user } = res.locals;
 
   if (!taskDTO || taskDTO.summary.length > SUMMARY_CHAR_LIMIT)
     return res.status(500).send();
@@ -67,6 +69,13 @@ router.put('/:id', validateUser, validateAuthor, async (req, res, next) => {
       where: { id: task.id },
       data: updatedTaskObj,
     });
+
+    emitter.emit(
+      'taskUpdated',
+      updatedTask.id,
+      user.name,
+      updatedTask.updatedAt
+    );
 
     return res.json(updatedTask);
   } catch (err) {
