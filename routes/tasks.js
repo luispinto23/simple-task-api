@@ -1,6 +1,6 @@
-var express = require('express');
-var httpError = require('http-errors');
-var router = express.Router();
+const express = require('express');
+const httpError = require('http-errors');
+const router = express.Router();
 
 const prisma = require('../db-client');
 

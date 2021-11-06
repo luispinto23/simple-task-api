@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const JWT = require('jsonwebtoken');
 const faker = require('faker');
 
 faker.locale = 'pt_PT';
@@ -69,6 +70,19 @@ const hashUsersPass = async users => {
   }
 };
 
+const generateUsersJWT = async users => {
+  for (const user of users) {
+    const token = JWT.sign(
+      {
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '2 days' }
+    );
+    user.token = token;
+  }
+};
+
 const Roles = [
   {
     description: 'manager',
@@ -80,6 +94,7 @@ const Roles = [
 
 module.exports = {
   hashUsersPass,
+  // generateUsersJWT,
   Roles,
   Users,
   Tasks,
