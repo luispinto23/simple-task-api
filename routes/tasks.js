@@ -1,6 +1,6 @@
 const express = require('express');
-const httpError = require('http-errors');
 const router = express.Router();
+const { validateManager } = require('../middleware/validateAuth');
 
 const prisma = require('../db-client');
 
@@ -8,7 +8,7 @@ const tasks = [
   { id: 1, description: 'sample task', date: new Date().getTime(), userId: 0 },
 ];
 
-router.get('/', async (req, res) => {
+router.get('/', validateManager, async (req, res) => {
   const allTasks = await prisma.task.findMany();
 
   res.json(allTasks);
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res, next) => {
     where: { id: Number(id) },
   });
 
-  if (!task) return next(httpError(404, 'Not found'));
+  if (!task) return res.status(404).send();
 
   res.json(task);
 });
@@ -29,7 +29,7 @@ router.get('/:id', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   const taskDTO = req.body;
 
-  if (!taskDTO) return next(httpError[500]);
+  if (!taskDTO) return res.status(500).send();
 
   const newTask = await prisma.task.create({
     data: { ...taskDTO },
@@ -43,7 +43,7 @@ router.put('/:id', (req, res, next) => {
 
   const task = tasks.find(task => task.id === Number(id));
 
-  if (!task) return next(httpError(404, 'Not found'));
+  if (!task) return res.status(404).send();
 
   const updatedTask = { ...task, ...req.body };
 
@@ -59,7 +59,7 @@ router.delete('/:id', (req, res, next) => {
 
   const taskIndex = tasks.findIndex(task => task.id === Number(id));
 
-  if (taskIndex < 0) return next(httpError(404, 'Not found'));
+  if (taskIndex < 0) return res.status(404).send();
 
   // TODO: some DB logic goes here
   tasks.splice(taskIndex);

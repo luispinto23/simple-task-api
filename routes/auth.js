@@ -5,18 +5,18 @@ const JWT = require('jsonwebtoken');
 const router = express.Router();
 const prisma = require('../db-client');
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({
     where: { email: email },
   });
 
-  if (!user) return next(httpError[422]);
+  if (!user) return res.status(404).send();
 
   const isValid = await bcrypt.compare(password, user.password);
 
-  if (!isValid) return next(httpError[404]);
+  if (!isValid) return res.status(404).send();
 
   const token = JWT.sign(
     {
@@ -27,7 +27,7 @@ router.post('/login', async (req, res) => {
   );
 
   res.json({
-    token,
+    token: `Bearer ${token}`,
   });
 });
 
