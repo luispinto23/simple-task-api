@@ -1,4 +1,5 @@
 const express = require('express');
+const { encryptMessage, decryptMessage } = require('../crypto');
 const router = express.Router();
 const {
   validateManager,
@@ -15,7 +16,14 @@ router.get('/', validateUser, validateManager, async (req, res) => {
 
   const allTasks = await prisma.task.findMany();
 
-  return res.json(allTasks);
+  const decryptedTasks = allTasks.map(task => {
+    const { summary } = task;
+
+    const decryptedSummary = decryptMessage(summary);
+    return { ...task, summary: decryptedSummary };
+  });
+
+  return res.json(decryptedTasks);
 });
 
 router.get(
@@ -25,8 +33,12 @@ router.get(
   validateAuthor,
   async (req, res, next) => {
     if (!res.locals.task) return res.status(401).send();
+    const { summary } = res.locals.task;
 
-    return res.json(res.locals.task);
+    const decryptedSummary = decryptMessage(summary);
+    const task = { ...res.locals.task, summary: decryptedSummary };
+
+    return res.json(task);
   }
 );
 
@@ -39,9 +51,14 @@ router.post('/', validateUser, async (req, res, next) => {
 
   const { user } = res.locals;
 
+  const { summary } = taskDTO;
+
+  const encryptedSummary = encryptMessage(summary);
+  const task = { ...taskDTO, summary: encryptedSummary };
+
   try {
     const newTask = await prisma.task.create({
-      data: { ...taskDTO, authorId: Number(user.id) },
+      data: { ...task, authorId: Number(user.id) },
     });
 
     emitter.emit('taskCreated', newTask.id, user.name, newTask.createdAt);
@@ -59,10 +76,21 @@ router.put('/:id', validateUser, validateAuthor, async (req, res, next) => {
   if (!taskDTO || taskDTO.summary.length > SUMMARY_CHAR_LIMIT)
     return res.status(500).send();
 
+  let newTask;
+
+  if (taskDTO.summary) {
+    const { summary } = taskDTO;
+
+    const encryptedSummary = encryptMessage(summary);
+    newTask = { ...taskDTO, summary: encryptedSummary };
+  } else {
+    newTask = taskDTO;
+  }
+
   const { task } = res.locals;
 
   delete task.updatedAt;
-  const updatedTaskObj = { ...task, ...taskDTO };
+  const updatedTaskObj = { ...task, ...newTask };
 
   try {
     const updatedTask = await prisma.task.update({

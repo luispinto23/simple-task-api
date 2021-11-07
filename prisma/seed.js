@@ -4,7 +4,7 @@ const {
   Tasks,
   Users,
   hashUsersPass,
-  generateUsersJWT,
+  encryptTasksSummary,
 } = require('../data/seedData');
 
 const main = async () => {
@@ -12,12 +12,12 @@ const main = async () => {
     data: Roles,
   });
   await hashUsersPass(Users);
-  // await generateUsersJWT(Users);
   await prisma.user.createMany({
     data: Users,
   });
+  const encryptedTasks = encryptTasksSummary(Tasks);
   await prisma.task.createMany({
-    data: Tasks,
+    data: encryptedTasks,
   });
 };
 

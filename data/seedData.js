@@ -1,56 +1,56 @@
 const bcrypt = require('bcrypt');
-const JWT = require('jsonwebtoken');
 const faker = require('faker');
+const { encryptMessage } = require('../crypto');
 
 faker.locale = 'pt_PT';
 
 const Tasks = [
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
   {
-    summary: faker.finance.transactionDescription(),
+    summary: faker.git.commitMessage(),
     authorId: Math.floor(Math.random() * 5) + 1,
   },
 ];
@@ -70,17 +70,15 @@ const hashUsersPass = async users => {
   }
 };
 
-const generateUsersJWT = async users => {
-  for (const user of users) {
-    const token = JWT.sign(
-      {
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '2 days' }
-    );
-    user.token = token;
-  }
+const encryptTasksSummary = tasks => {
+  const encryptedTasks = tasks.map(task => {
+    const { summary } = task;
+
+    const encryptedSummary = encryptMessage(summary);
+    return { ...task, summary: encryptedSummary };
+  });
+
+  return encryptedTasks;
 };
 
 const Roles = [
@@ -94,7 +92,7 @@ const Roles = [
 
 module.exports = {
   hashUsersPass,
-  // generateUsersJWT,
+  encryptTasksSummary,
   Roles,
   Users,
   Tasks,
