@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../app');
+const { encryptMessage, decryptMessage } = require('../crypto');
 
 describe('Sword task api', () => {
   it('GET /tasks => Return a list of tasks', async () => {
@@ -73,5 +74,24 @@ describe('Sword task api', () => {
 
   it('DELETE /tasks/:id => Delete a specific task', async () => {
     await request(app).delete('/tasks/1').expect(200);
+  });
+});
+
+describe('Message encryption', () => {
+  const ORIGINAL_MESSAGE = 'This is a plain text message';
+  let encryptedMessage;
+
+  it('Should be able to encrypt the original message', () => {
+    const hexadecimal = /[0-9A-Fa-f]{6}/g;
+    encryptedMessage = encryptMessage(ORIGINAL_MESSAGE);
+
+    expect(encryptedMessage).not.toBe(ORIGINAL_MESSAGE);
+    expect(encryptedMessage).toMatch(hexadecimal);
+  });
+
+  it('Should be able to decrypt the encrypted message', () => {
+    const decryptedMessage = decryptMessage(encryptedMessage);
+
+    expect(decryptedMessage).toEqual(ORIGINAL_MESSAGE);
   });
 });
