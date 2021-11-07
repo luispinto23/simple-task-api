@@ -61,7 +61,7 @@ router.post('/', validateUser, async (req, res, next) => {
       data: { ...task, authorId: Number(user.id) },
     });
 
-    emitter.emit('taskCreated', newTask.id, user.name, newTask.createdAt);
+    emitter.emit('taskCreated', summary, user.name, newTask.createdAt);
     return res.status(201).json(newTask);
   } catch (err) {
     console.error(error);
