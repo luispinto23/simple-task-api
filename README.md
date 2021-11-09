@@ -16,7 +16,7 @@ This project is a proposed solution to the Sword Health backend challenge. The f
 - Use any language to develop this HTTP API ✅
 - Create a local development environment using dockercontaining this service and a MySQL database ✅
 - Use MySQL database to persist data from the application ✅
-- Features should have unit tests to ensure they are working properly 🔨
+- Features should have unit tests to ensure they are working properly ✅
 
 ### About Bonus
 
@@ -42,17 +42,17 @@ npm run docker:migrate
 It's possible to run the main app locally, although an instance of MySQL must be provided as the database for the project. The database URL should then be specified in the `.env.local` file.
 
 ```
-cd app && dotenv -e ./app/.env.local npm run start
+cd app && dotenv -e ./.env.local npm run start
 ```
 
 If you wish to seed a database with some random data run the following command:
 
 ```
-cd app && dotenv -e ./app/.env.local npm run migrate:dev
+cd app && dotenv -e ./.env.local npm run migrate:dev
 ```
 
 - this command assumes you're in the project root directory, if you are already inside the `app` folder please ignore the first part of the command and use this only:
-  > `dotenv -e ./app/.env.local npm run migrate:dev`
+  > `dotenv -e ./.env.local npm run migrate:dev`
 
 **About the seeded data**:
 
@@ -65,6 +65,14 @@ Regarding the seeded users:
 - two of the users are not completelly random for test proposes:
   - User with email `manager@sword.com` with the role of `manager`.
   - User with email `tech@sword.com` with the role of `technician`.
+
+### Testing the application
+
+The test suite can be called using the following command:
+
+```
+npm run test
+```
 
 ### Notes
 
