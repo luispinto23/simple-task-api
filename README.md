@@ -14,7 +14,7 @@ This project is a proposed solution to the Sword Health backend challenge. The f
 ### About Tech Requirements
 
 - Use any language to develop this HTTP API ✅
-- Create a local development environment using dockercontaining this service and a MySQL database ✅
+- Create a local development environment using docker containing this service and a MySQL database ✅
 - Use MySQL database to persist data from the application ✅
 - Features should have unit tests to ensure they are working properly ✅
 
@@ -27,13 +27,13 @@ This project is a proposed solution to the Sword Health backend challenge. The f
 
 ### Running the containerized app
 
-```
+```bash
 npm run docker:start
 ```
 
 Seeding the database:
 
-```
+```bash
 npm run docker:migrate
 ```
 
@@ -41,13 +41,13 @@ npm run docker:migrate
 
 It's possible to run the main app locally, although an instance of MySQL must be provided as the database for the project. The database URL should then be specified in the `.env.local` file.
 
-```
+```bash
 cd app && dotenv -e ./.env.local npm run start
 ```
 
 If you wish to seed a database with some random data run the following command:
 
-```
+```bash
 cd app && dotenv -e ./.env.local npm run migrate:dev
 ```
 
@@ -56,13 +56,13 @@ cd app && dotenv -e ./.env.local npm run migrate:dev
 
 **About the seeded data**:
 
-The sedded data consists in a small set of 12 taks randomly distributed between users.
+The seeded data consists in a small set of 12 tasks randomly distributed between users.
 
 Regarding the seeded users:
 
 - all of them are seeded with the DEFAULT_PASSWORD specified in the env file used to run the commands.
 
-- two of the users are not completelly random for test proposes:
+- two of the users are not completely random for test proposes:
   - User with email `manager@sword.com` with the role of `manager`.
   - User with email `tech@sword.com` with the role of `technician`.
 
@@ -70,7 +70,7 @@ Regarding the seeded users:
 
 The test suite can be called using the following command:
 
-```
+```bash
 npm run test
 ```
 
@@ -86,17 +86,17 @@ In the root level of the project there's a file `Insomnia_API_calls.json` that p
 
 ### Requirements
 
-You are developing a software to account for maintenancetasks performed during a working day. This applicationhas two types of users (Manager, Technician).
+You are developing a software to account for maintenance tasks performed during a working day. This application has two types of users (Manager, Technician).
 
-The technician performs tasks and is only able tosee, create or update his own performed tasks.
-The manager can see tasks from all the technicians,delete them, and should be notified when some techperformsa task.
+The technician performs tasks and is only able to see, create or update his own performed tasks.
+The manager can see tasks from all the technicians,delete them, and should be notified when some tech performs a task.
 
-A task has a summary (max: 2500 characters) and adate when it was performed, the summary from the taskcancontain personal information.
+A task has a summary (max: 2500 characters) and a date when it was performed, the summary from the task can contain personal information.
 
 #### Notes
 
-- If you don’t have enough time to complete the testyou should prioritize complete features ( with tests) over many features.
-- We’ll evaluate security, quality and readability ofyour code
+- If you don’t have enough time to complete the test you should prioritize complete features ( with tests) over many features.
+- We’ll evaluate security, quality and readability of your code
 - This test is suitable for all levels of developers,so make sure to prove yours
 
 ### Development
@@ -118,4 +118,4 @@ A task has a summary (max: 2500 characters) and adate when it was performed, the
 #### Bonus
 
 - Use a message broker to decouple notification logic from the application flow
-- Create Kubernetes object files needed to deploy thisapplication
+- Create Kubernetes object files needed to deploy this application
