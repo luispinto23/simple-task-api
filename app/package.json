@@ -4,7 +4,12 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "jest --watchAll --verbose"
+    "docker:start": "docker-compose up",
+    "test": "jest --watchAll --verbose",
+    "seed": "node prisma/seed.js",
+    "migrate:dev": "prisma migrate reset -f",
+    "docker:migrate": "docker-compose -f ../docker-compose.yml run --rm sword_task_api npm run migrate:dev",
+    "docker:seed": "docker-compose -f ../docker-compose.yml run --rm sword_task_api npm run seed"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -14,6 +19,7 @@
     "bcrypt": "^5.0.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv-cli": "^4.1.0",
     "express": "~4.16.1",
     "jsonwebtoken": "^8.5.1",
     "morgan": "~1.9.1"

@@ -56,9 +56,9 @@ const Tasks = [
 ];
 
 const Users = [
+  { email: 'manager@sword.com', name: faker.name.findName(), roleId: 1 },
   { email: faker.internet.email(), name: faker.name.findName(), roleId: 1 },
-  { email: faker.internet.email(), name: faker.name.findName(), roleId: 1 },
-  { email: faker.internet.email(), name: faker.name.findName(), roleId: 2 },
+  { email: 'tech@sword.com', name: faker.name.findName(), roleId: 2 },
   { email: faker.internet.email(), name: faker.name.findName(), roleId: 2 },
   { email: faker.internet.email(), name: faker.name.findName(), roleId: 2 },
 ];
