@@ -12,8 +12,8 @@ services:
       MYSQL_PASSWORD: health
     ports:
       - 3306:3306
-  sword_task_api:
-    image: sword_task_api
+  sword-task-api:
+    image: sword-task-api
     build: ./app
     env_file: ./app/.env
     ports:
