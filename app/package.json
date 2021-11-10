@@ -6,13 +6,13 @@
     "start": "node ./bin/www",
     "docker:start": "docker-compose up -d",
     "docker:test:up": "docker-compose -f ../docker-compose.test.yml up -d",
+    "docker:test:migrate": "dotenv -e ./.env.test npm run migrate:dev",
     "docker:test:down": "docker-compose -f ../docker-compose.test.yml down",
-    "test": "dotenv -e ./.env.test jest -i",
+    "test": "dotenv -e ./.env.test jest -i && npm run docker:test:down",
     "seed": "node prisma/seed.js",
     "migrate:dev": "prisma migrate reset -f",
     "docker:migrate": "docker-compose -f ../docker-compose.yml run --rm sword-task-api npm run migrate:dev",
-    "docker:seed": "docker-compose -f ../docker-compose.yml run --rm sword-task-api npm run seed",
-    "test:it": "npm run docker:test:up && dotenv -e ./.env.test npm run migrate:dev && docker:test:down"
+    "docker:seed": "docker-compose -f ../docker-compose.yml run --rm sword-task-api npm run seed"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

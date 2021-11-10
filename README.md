@@ -1,8 +1,8 @@
-# Sword health backend challenge
+# Backend challenge
 
-This project is a proposed solution to the Sword Health backend challenge. The full challenge description can be found [here](#full-challenge-description).
+This project is a proposed solution to the backend challenge. The full challenge description can be found [here](#full-challenge-description).
 
-## This is the status of the current solution
+## This is the state of the current solution
 
 ### About Features
 
@@ -27,6 +27,10 @@ This project is a proposed solution to the Sword Health backend challenge. The f
 
 ### Running the containerized app
 
+**Please note:** all the following commands assume you're inside the `app` directory, if that's not the case, please change to the `app` directory prior to any of those commands
+
+> `cd app`
+
 ```bash
 npm run docker:start
 ```
@@ -39,24 +43,21 @@ npm run docker:migrate
 
 ### Running the application locally
 
-It's possible to run the main app locally, although an instance of MySQL must be provided as the database for the project. The database URL should then be specified in the `.env.local` file.
+It's possible to run the main app locally, **although an instance of MySQL must be provided as the database for the project**. The database URL should then be specified in the `.env.local` file.
 
 ```bash
-cd app && dotenv -e ./.env.local npm run start
+dotenv -e ./.env.local npm run start
 ```
 
 If you wish to seed a database with some random data run the following command:
 
 ```bash
-cd app && dotenv -e ./.env.local npm run migrate:dev
+dotenv -e ./.env.local npm run migrate:dev
 ```
-
-- this command assumes you're in the project root directory, if you are already inside the `app` folder please ignore the first part of the command and use this only:
-  > `dotenv -e ./.env.local npm run migrate:dev`
 
 **About the seeded data**:
 
-The seeded data consists in a small set of 12 tasks randomly distributed between users.
+The seeded data consists of a small set of 12 tasks randomly distributed between users.
 
 Regarding the seeded users:
 
@@ -68,15 +69,33 @@ Regarding the seeded users:
 
 ### Testing the application
 
-The test suite can be called using the following command:
+The test suite can be called using the following commands:
+
+```bash
+npm run docker:test:up
+```
+
+- This will launch a test container
+
+```bash
+npm run docker:test:migrate
+```
+
+- This will prepare the database for the test.
+
+**Note:** These two steps are not merged into one npm command because in the majority of the times it was ran as a single command - the migration would fail because the MySQL server was not fully booted when the migration would be attempted. If this still occurs, please repeat this last migration command.
+
+After the migration is complete you can run the test suite using the command:
 
 ```bash
 npm run test
 ```
 
-### Notes
+- This command will run the tests and destroy the containers and any test data afterwards.
 
-In the root level of the project there's a file `Insomnia_API_calls.json` that provides the entire collection of api calls exposed by the app that can be imported into Insomnia app
+### Final Notes
+
+In the root level of the project there's a file `Insomnia_API_calls.json` that provides the entire collection of API calls exposed by the app that can be imported into Insomnia app.
 
 ---
 
